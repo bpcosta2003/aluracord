@@ -86,7 +86,7 @@ export default function PaginaInicial() {
                 fontSize: "14px",
               }}
             >
-              Aluracord - Matrix ({username})
+              Aluracord - ({username})
             </Text>
 
             <TextField
