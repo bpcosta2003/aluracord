@@ -91,6 +91,7 @@ export default function PaginaInicial() {
 
             <TextField
               type="text"
+              placeholder="Coloque seu username do GitHub"
               value={username}
               onChange={(event) => {
                 //% cada vez que o usuário digitar vai acontecer algo
@@ -140,7 +141,6 @@ export default function PaginaInicial() {
               flex: 1,
               minHeight: "240px",
             }}
-            s
           >
             <Image
               className="boxImg"
