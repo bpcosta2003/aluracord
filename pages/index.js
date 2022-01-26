@@ -10,10 +10,28 @@ function GlobalStyle() {
         box-sizing: border-box;
         list-style: none;
       }
+      .boxBlur {
+        backdrop-filter: blur(16px);
+        transition: all 0.5s;
+      }
+      .boxBlur:hover {
+        backdrop-filter: blur(10px);
+      }
+      .boxImgBack .boxImg {
+        transition: 0.3s;
+      }
+      .boxImgBack .boxImg:hover {
+        transition: 0.3s;
+        border-radius: 100%;
+      }
+      ::selection {
+        background-color: ${appConfig.theme.colors.neutrals["100"]};
+        color: rgba(0, 0, 0, 1);
+      }
       body {
         font-family: "Open Sans", sans-serif;
-        background-image: ;
       }
+
       /* App fit Height */
       html,
       body,
@@ -40,10 +58,12 @@ function Titulo(props) {
       <Tag>{props.children}</Tag>
       <style jsx>{`
         ${Tag} {
-          color: ${appConfig.theme.colors.neutrals["000"]};
-          padding: 1.5rem;
+          color: ${appConfig.theme.colors.neutrals["900"]};
+          padding: 1.5rem 0rem;
           text-align: left;
+          font-size: 22px;
           margin: 0;
+          text-transform: uppercase;
         }
       `}</style>
     </div>
@@ -51,7 +71,7 @@ function Titulo(props) {
 }
 
 export default function PaginaInicial() {
-  const username = "peas";
+  const username = "bpcosta2003";
 
   return (
     <>
@@ -63,13 +83,13 @@ export default function PaginaInicial() {
           justifyContent: "center",
           backgroundColor: appConfig.theme.colors.primary["050"],
           backgroundImage:
-            "url(https://images.unsplash.com/photo-1635321349359-333da6bb6da9?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1965&q=80)",
+            "url(https://images.unsplash.com/photo-1642923051153-07d4c98fe203?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1632&q=80)",
           backgroundRepeat: "no-repeat",
           backgroundSize: "cover",
-          backgroundBlendMode: "multiply",
         }}
       >
         <Box
+          className="boxBlur"
           styleSheet={{
             display: "flex",
             alignItems: "center",
@@ -79,12 +99,13 @@ export default function PaginaInicial() {
               sm: "row",
             },
             width: "100%",
-            maxWidth: "900px",
+            maxWidth: "1000px",
             borderRadius: "10px",
             padding: "32px",
             margin: "16px",
-            boxShadow: "0 2px 10px 0 rgb(0 0 0 / 20%)",
-            backgroundColor: appConfig.theme.colors.neutrals[700],
+            boxShadow: "0 20px 20px 0 rgb(0 0 0 / 20%)",
+            backgroundColor: "rgba(225,225,225,0.5)",
+            backgroundFilter: "30px",
           }}
         >
           {/* Formulário */}
@@ -96,8 +117,8 @@ export default function PaginaInicial() {
               alignItems: "center",
               justifyContent: "center",
               width: {xs: "100%", sm: "50%"},
-              textAlign: "center",
-              marginBottom: "32px",
+              textAlign: "left",
+              margin: "22px",
             }}
           >
             <Titulo tag="h2">Boas vindas de volta!</Titulo>
@@ -105,7 +126,8 @@ export default function PaginaInicial() {
               variant="body3"
               styleSheet={{
                 marginBottom: "32px",
-                color: appConfig.theme.colors.neutrals[300],
+                color: appConfig.theme.colors.neutrals[900],
+                fontSize: "14px",
               }}
             >
               {appConfig.name}
@@ -115,22 +137,22 @@ export default function PaginaInicial() {
               fullWidth
               textFieldColors={{
                 neutral: {
-                  textColor: appConfig.theme.colors.neutrals[200],
+                  textColor: appConfig.theme.colors.neutrals[900],
                   mainColor: appConfig.theme.colors.neutrals[900],
-                  mainColorHighlight: appConfig.theme.colors.primary[500],
-                  backgroundColor: appConfig.theme.colors.neutrals[800],
+                  mainColorHighlight: appConfig.theme.colors.neutrals[300],
+                  backgroundColor: appConfig.theme.colors.neutrals[100],
                 },
               }}
             />
             <Button
               type="submit"
-              label="Entrar"
+              label="ENTRAR"
               fullWidth
               buttonColors={{
-                contrastColor: appConfig.theme.colors.neutrals["000"],
-                mainColor: appConfig.theme.colors.primary[500],
-                mainColorLight: appConfig.theme.colors.primary[400],
-                mainColorStrong: appConfig.theme.colors.primary[600],
+                contrastColor: appConfig.theme.colors.neutrals["100"],
+                mainColor: appConfig.theme.colors.neutrals[900],
+                mainColorLight: appConfig.theme.colors.primary[800],
+                mainColorStrong: appConfig.theme.colors.neutrals[500],
               }}
             />
           </Box>
@@ -138,23 +160,25 @@ export default function PaginaInicial() {
 
           {/* Photo Area */}
           <Box
+            className="boxImgBack"
             styleSheet={{
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
-              maxWidth: "200px",
-              padding: "16px",
-              backgroundColor: appConfig.theme.colors.neutrals[800],
+              maxWidth: "250px",
+              padding: "10px 10px",
+              backgroundColor: "#000000",
               border: "1px solid",
-              borderColor: appConfig.theme.colors.neutrals[999],
-              borderRadius: "10px",
+              borderColor: "none",
+              borderRadius: "5%",
               flex: 1,
               minHeight: "240px",
             }}
           >
             <Image
+              className="boxImg"
               styleSheet={{
-                borderRadius: "50%",
+                borderRadius: "5%",
                 marginBottom: "16px",
               }}
               src={`https://github.com/${username}.png`}
