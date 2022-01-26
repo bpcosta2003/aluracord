@@ -1,55 +1,7 @@
 import appConfig from "../config.json";
 import {Box, Button, Text, TextField, Image} from "@skynexui/components";
-
-function GlobalStyle() {
-  return (
-    <style global jsx>{`
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        list-style: none;
-      }
-      .boxBlur {
-        backdrop-filter: blur(16px);
-        transition: all 0.5s;
-      }
-      .boxBlur:hover {
-        backdrop-filter: blur(10px);
-      }
-      .boxImgBack .boxImg {
-        transition: 0.3s;
-      }
-      .boxImgBack .boxImg:hover {
-        transition: 0.3s;
-        border-radius: 100%;
-      }
-      ::selection {
-        background-color: ${appConfig.theme.colors.neutrals["100"]};
-        color: rgba(0, 0, 0, 1);
-      }
-      body {
-        font-family: "Open Sans", sans-serif;
-      }
-
-      /* App fit Height */
-      html,
-      body,
-      #__next {
-        min-height: 100vh;
-        display: flex;
-        flex: 1;
-      }
-      #__next {
-        flex: 1;
-      }
-      #__next > * {
-        flex: 1;
-      }
-      /* ./App fit Height */
-    `}</style>
-  );
-}
+import {useRouter} from "next/router";
+import React from "react";
 
 function Titulo(props) {
   const Tag = props.tag || "h1";
@@ -71,11 +23,11 @@ function Titulo(props) {
 }
 
 export default function PaginaInicial() {
-  const username = "bpcosta2003";
+  const [username, setUsername] = React.useState("");
+  const roteamento = useRouter();
 
   return (
     <>
-      <GlobalStyle />
       <Box
         styleSheet={{
           display: "flex",
@@ -105,23 +57,27 @@ export default function PaginaInicial() {
             margin: "16px",
             boxShadow: "0 20px 20px 0 rgb(0 0 0 / 20%)",
             backgroundColor: "rgba(225,225,225,0.5)",
-            backgroundFilter: "30px",
           }}
         >
           {/* Formulário */}
           <Box
             as="form"
+            onSubmit={(infoEvento) => {
+              //% Quando submeter algo irá acontecer
+              infoEvento.preventDefault(); //% Vai prevenir o carregamento da página
+              roteamento.push("/chat"); //% vai para a página chat.js sem carregar a página
+            }}
             styleSheet={{
               display: "flex",
               flexDirection: "column",
-              alignItems: "center",
+              alignItems: "left",
               justifyContent: "center",
               width: {xs: "100%", sm: "50%"},
               textAlign: "left",
               margin: "22px",
             }}
           >
-            <Titulo tag="h2">Boas vindas de volta!</Titulo>
+            <Titulo tag="h2">Bem vindo de volta!</Titulo>
             <Text
               variant="body3"
               styleSheet={{
@@ -130,10 +86,17 @@ export default function PaginaInicial() {
                 fontSize: "14px",
               }}
             >
-              {appConfig.name}
+              Aluracord - Matrix ({username})
             </Text>
 
             <TextField
+              type="text"
+              value={username}
+              onChange={(event) => {
+                //% cada vez que o usuário digitar vai acontecer algo
+                const value = event.target.value; //% Onde está o valor ?
+                setUsername(value); //% Trocar o valor da variável
+              }}
               fullWidth
               textFieldColors={{
                 neutral: {
@@ -144,6 +107,7 @@ export default function PaginaInicial() {
                 },
               }}
             />
+
             <Button
               type="submit"
               label="ENTRAR"
@@ -152,7 +116,7 @@ export default function PaginaInicial() {
                 contrastColor: appConfig.theme.colors.neutrals["100"],
                 mainColor: appConfig.theme.colors.neutrals[900],
                 mainColorLight: appConfig.theme.colors.primary[800],
-                mainColorStrong: appConfig.theme.colors.neutrals[500],
+                mainColorStrong: appConfig.theme.colors.neutrals[800],
               }}
             />
           </Box>
@@ -164,22 +128,26 @@ export default function PaginaInicial() {
             styleSheet={{
               display: "flex",
               flexDirection: "column",
+              justifyContent: "center",
               alignItems: "center",
               maxWidth: "250px",
               padding: "10px 10px",
-              backgroundColor: "#000000",
-              border: "1px solid",
-              borderColor: "none",
-              borderRadius: "5%",
+              background:
+                "linear-gradient(90deg,rgba(245,245,245,0),rgba(245,245,245,0))",
+              border: "0px solid",
+              boxShadow: "0 10px 90px 0 rgb(0 0 0 / 20%)",
+              borderRadius: "10%",
               flex: 1,
               minHeight: "240px",
             }}
+            s
           >
             <Image
               className="boxImg"
               styleSheet={{
-                borderRadius: "5%",
+                borderRadius: "10%",
                 marginBottom: "16px",
+                boxShadow: "0 5px 5px 0 rgb(0 0 0 / 10%)",
               }}
               src={`https://github.com/${username}.png`}
             />
