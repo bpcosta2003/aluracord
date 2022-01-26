@@ -2,6 +2,8 @@
 
 Código feito com ajuda da Alura na imersão React!
 
-Abra e inicie o projeto com o comando
+Abra e inicie o projeto com o comando 
 
-### 'yarn dev'
+>yarn dev
+
+https://aluracord-bybrunocosta.vercel.app/
