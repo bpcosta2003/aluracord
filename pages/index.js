@@ -24,7 +24,12 @@ function Titulo(props) {
 
 export default function PaginaInicial() {
   const [username, setUsername] = React.useState("");
+  const [bioUser, setBioUser] = React.useState("");
   const roteamento = useRouter();
+
+  fetch(`https://api.github.com/users/${username}`) //% Requisição da API do GITHUB
+    .then((response) => response.json())
+    .then((json) => setBioUser(json.bio));
 
   return (
     <>
@@ -86,7 +91,7 @@ export default function PaginaInicial() {
                 fontSize: "14px",
               }}
             >
-              Aluracord - ({username})
+              Aluracord by bpcosta2003
             </Text>
 
             <TextField
@@ -145,11 +150,14 @@ export default function PaginaInicial() {
             <Image
               className="boxImg"
               styleSheet={{
-                borderRadius: "10%",
+                borderRadius: "100%",
                 marginBottom: "16px",
                 boxShadow: "0 5px 5px 0 rgb(0 0 0 / 10%)",
               }}
-              src={`https://github.com/${username}.png`}
+              src={
+                //% Verificação se o nome de usuário é valido para ter imagem
+                username.length >= 3 ? `https://github.com/${username}.png` : ``
+              }
             />
             <Text
               variant="body4"
@@ -160,9 +168,22 @@ export default function PaginaInicial() {
                 borderRadius: "1000px",
               }}
             >
-              {username}
+              {username.length >= 3 ? `${username}` : "Usuário Inválido"}
             </Text>
+            <p>
+              {bioUser}
+              <style jsx>{`
+                p {
+                  color: black;
+                  font-size: 12px;
+                  font-weight: bold;
+                  text-align: center;
+                  margin-top: 8px;
+                }
+              `}</style>
+            </p>
           </Box>
+
           {/* Photo Area */}
         </Box>
       </Box>

@@ -16,12 +16,34 @@ function GlobalStyle() {
       .boxBlur:hover {
         backdrop-filter: blur(10px);
       }
+      .boxBlur2 {
+        backdrop-filter: blur(10px);
+        transition: all 0.5s;
+      }
+      .boxBlur2:hover {
+        backdrop-filter: blur(16px);
+      }
       .boxImgBack .boxImg {
         transition: 0.3s;
       }
       .boxImgBack .boxImg:hover {
         transition: 0.3s;
-        border-radius: 100%;
+        border-radius: 5%;
+      }
+      .btnLogout {
+        background-color: rgba(0, 0, 0, 0) !important;
+      }
+      .btnLogout:hover {
+        background-color: rgba(245, 245, 245, 0.5) !important;
+      }
+      .btnSend {
+        padding: 12px 8px !important;
+        background: #406e8e !important;
+        width: 9rem;
+        height: 45.8px;
+      }
+      .btnSend:hover {
+        background: #335771 !important;
       }
       ::selection {
         background-color: ${appConfig.theme.colors.neutrals["200"]};
