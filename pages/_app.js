@@ -9,6 +9,18 @@ function GlobalStyle() {
         box-sizing: border-box;
         list-style: none;
       }
+      *::-webkit-scrollbar {
+        width: 5px;
+      }
+      *::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      *::-webkit-scrollbar-thumb {
+        background-color: #cccccc;
+        border-radius: 100px;
+        border: 0px solid orange;
+      }
       .boxBlur {
         backdrop-filter: blur(16px);
         transition: all 0.5s;

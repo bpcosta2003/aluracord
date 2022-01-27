@@ -1,6 +1,14 @@
 import {Box, Text, TextField, Image, Button} from "@skynexui/components";
 import React from "react";
 import appConfig from "../config.json";
+import {createClient} from "@supabase/supabase-js";
+
+const SUPABASE_ANON_KEY =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTY0MzMxNTIxOCwiZXhwIjoxOTU4ODkxMjE4fQ.6S7Q3KQSnMjYVOUTb8EO6R6o-JF2zpmuYOQYFmDaCIs";
+const SUPABASE_URL = "https://eextaluwznyskcydpabb.supabase.co";
+
+//% Create a single supabase client for interacting with your database
+const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 export default function ChatPage() {
   // Sua lógica vai aqui
@@ -8,17 +16,38 @@ export default function ChatPage() {
   const [mensagem, setMensagem] = React.useState(""); //% armazenando a mensagem digitada
   const [listChat, setListChat] = React.useState([]); //% colocar essa mensagem em uma lista
 
+  React.useEffect(() => {
+    //% Pegando dados do SUPABASE
+    supabaseClient
+      .from("mensagens") //% Pegar da tabela 'mensagens' la no SUPABASE
+      .select("*") //% Selecionar todas as tabelas
+      .order("id", {ascending: false}) //% Invertendo a ordem de busca, para mensagens virem na ordem certa
+      .then(({data}) => {
+        setListChat(data); //% Atribuindo valores do banco de dados na lista de mensagens
+      });
+  }, []);
+
   function handleNovaMensagem(novaMensagem) {
     //% função que recebe a mensagem digitada, adiciona essa mensagem a lista e limpa o cmpo de mensagem
     const mensagem = {
       //% criando um objeto da mensagem
-      id: listChat.length + 1,
-      from: "bpcosta2003",
+      // id: listChat.length + 1, ''' Não vai precisar mais, pois o id já é cadastrado automaticamente no SUPABASE quando adiciona uma nova mensagem '''
+      de: "bpcosta2003",
       texto: novaMensagem,
     };
 
-    setListChat([mensagem, ...listChat]); //% Os '...' servem para espalhar os itens da lista sem criar array dentro de array
-    setMensagem("");
+    if (novaMensagem.length < 1) {
+      alert("Mensagem muito curta");
+    } else {
+      supabaseClient //% Inserindo novaMensagem ao banco do SUPABASE
+        .from("mensagens")
+        .insert([mensagem])
+        .then(({data}) => {
+          setListChat([data[0], ...listChat]); //% Os '...' servem para espalhar os itens da lista sem criar array dentro de array
+        });
+
+      setMensagem("");
+    }
   }
 
   function removeMessage(id) {
@@ -139,13 +168,13 @@ function Header() {
       <Box
         styleSheet={{
           width: "100%",
-          marginBottom: "16px",
+          margin: "16px",
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
         }}
       >
-        <Text variant="heading5">Chat</Text>
+        <Text variant="heading3">Chat</Text>
         <Button className="btnLogout" label="SAIR" href="/" />
       </Box>
     </>
@@ -197,9 +226,9 @@ function MessageList(props) {
                   display: "inline-block",
                   marginRight: "8px",
                 }}
-                src={`https://github.com/bpcosta2003.png`}
+                src={`https://github.com/${mensagem.de}.png`}
               />
-              <Text tag="strong">{mensagem.from}</Text>
+              <Text tag="strong">{mensagem.de}</Text>
               <Text
                 styleSheet={{
                   fontSize: "10px",
