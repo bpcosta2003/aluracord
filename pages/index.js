@@ -23,9 +23,10 @@ function Titulo(props) {
 }
 
 export default function PaginaInicial() {
-  const [username, setUsername] = React.useState("");
-  const [bioUser, setBioUser] = React.useState("");
-  const roteamento = useRouter();
+  const [username, setUsername] = React.useState(""); //% setar username
+  const [bioUser, setBioUser] = React.useState(""); //% setar bio
+  const [disable, setDisable] = React.useState(true); //% controle para verificar se existe ou não o usuário
+  const roteamento = useRouter(); //% fazer rota para página de chat
 
   fetch(`https://api.github.com/users/${username}`) //% Requisição da API do GITHUB
     .then((response) => response.json())
@@ -102,6 +103,10 @@ export default function PaginaInicial() {
                 //% cada vez que o usuário digitar vai acontecer algo
                 const value = event.target.value; //% Onde está o valor ?
                 setUsername(value); //% Trocar o valor da variável
+                if (disable) {
+                  //% Se não existir o usuário será falso
+                  setDisable(false);
+                }
               }}
               fullWidth
               textFieldColors={{
@@ -124,6 +129,7 @@ export default function PaginaInicial() {
                 mainColorLight: appConfig.theme.colors.primary[800],
                 mainColorStrong: appConfig.theme.colors.neutrals[800],
               }}
+              disabled={username.length < 3 || disable} //% vai desabilitar o botão caso user < 3 caracteres e caso não exista
             />
           </Box>
           {/* Formulário */}
@@ -158,6 +164,12 @@ export default function PaginaInicial() {
                 //% Verificação se o nome de usuário é valido para ter imagem
                 username.length >= 3 ? `https://github.com/${username}.png` : ``
               }
+              onError={() => {
+                //% Se houver erro ( não achar imagem de usuário ) caso seja falso vai se tornar true ( vai desabilitar o botão )
+                if (!disable) {
+                  setDisable(true);
+                }
+              }}
             />
             <Text
               variant="body4"
@@ -168,7 +180,9 @@ export default function PaginaInicial() {
                 borderRadius: "1000px",
               }}
             >
-              {username.length >= 3 ? `${username}` : "Usuário Inválido"}
+              {disable || username.length < 3 //% caso disable = true e o usuário tiver menos de 3 caracteres vai informar 'Usuário Inválido', caso contrário mostra o nome de usuário
+                ? "Usuário Inválido"
+                : `${username}`}
             </Text>
             <p>
               {bioUser}

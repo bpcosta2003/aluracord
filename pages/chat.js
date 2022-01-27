@@ -157,8 +157,7 @@ function MessageList(props) {
     <Box
       tag="ul"
       styleSheet={{
-        overflow: "scroll",
-        overflowX: "hidden",
+        overflow: "auto",
         display: "flex",
         flexDirection: "column-reverse",
         flex: 1,
@@ -184,6 +183,9 @@ function MessageList(props) {
           >
             <Box
               styleSheet={{
+                alignItems: "center",
+                display: "flex",
+                flexDirection: "row !important",
                 marginBottom: "8px",
               }}
             >
@@ -217,8 +219,7 @@ function MessageList(props) {
                 styleSheet={{
                   background: "#406e8e",
                   borderRadius: "100%",
-                  position: "absolute",
-                  right: "48px",
+                  right: "-10px",
 
                   hover: {
                     backgroundColor: "#BB4430",
