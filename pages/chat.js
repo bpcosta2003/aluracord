@@ -2,6 +2,9 @@ import {Box, Text, TextField, Image, Button} from "@skynexui/components";
 import React from "react";
 import appConfig from "../config.json";
 import {createClient} from "@supabase/supabase-js";
+import {useRouter} from "next/router";
+import CircularProgress from "@mui/material/CircularProgress";
+import {ButtonSendSticker} from "../src/components/ButtonSendSticker";
 
 const SUPABASE_ANON_KEY =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTY0MzMxNTIxOCwiZXhwIjoxOTU4ODkxMjE4fQ.6S7Q3KQSnMjYVOUTb8EO6R6o-JF2zpmuYOQYFmDaCIs";
@@ -10,11 +13,23 @@ const SUPABASE_URL = "https://eextaluwznyskcydpabb.supabase.co";
 //% Create a single supabase client for interacting with your database
 const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+function escutaMensagensEmTempoReal(adicionaMensagem) {
+  //% Função para escutar uma nova mensagem chegando no banco de dados, passando como argumento uma função para adicionar a mensagem
+  return supabaseClient
+    .from("mensagens")
+    .on("INSERT", (respostaLive) => {
+      adicionaMensagem(respostaLive.new); //% recebe a mensagem nova
+    })
+    .subscribe();
+}
+
 export default function ChatPage() {
   // Sua lógica vai aqui
-
+  const rotaUsuario = useRouter();
+  const usuarioLogado = rotaUsuario.query.username; //% Recebendo as informações da página de login
   const [mensagem, setMensagem] = React.useState(""); //% armazenando a mensagem digitada
   const [listChat, setListChat] = React.useState([]); //% colocar essa mensagem em uma lista
+  const [carregando, setCarregando] = React.useState(true); //% Animação de carregamento de mensagens
 
   React.useEffect(() => {
     //% Pegando dados do SUPABASE
@@ -24,7 +39,19 @@ export default function ChatPage() {
       .order("id", {ascending: false}) //% Invertendo a ordem de busca, para mensagens virem na ordem certa
       .then(({data}) => {
         setListChat(data); //% Atribuindo valores do banco de dados na lista de mensagens
+        setCarregando(false);
       });
+
+    escutaMensagensEmTempoReal((novaMensagem) => {
+      //% Passa função que pega a nova mensagem
+
+      //% Se eu quero reusar um valor de referencia (objeto/array) preciso passar uma função pro setState()
+      //% Eu escuto a mensagem em tempo real, sempre que tiver uma nova mensagem eu jogo na lista e vai renderizar ela na tela
+
+      setListChat((valorAtualDaLista) => {
+        return [novaMensagem, ...valorAtualDaLista];
+      }); //% Os '...' servem para espalhar os itens da lista sem criar array dentro de array
+    });
   }, []);
 
   function handleNovaMensagem(novaMensagem) {
@@ -32,7 +59,7 @@ export default function ChatPage() {
     const mensagem = {
       //% criando um objeto da mensagem
       // id: listChat.length + 1, ''' Não vai precisar mais, pois o id já é cadastrado automaticamente no SUPABASE quando adiciona uma nova mensagem '''
-      de: "bpcosta2003",
+      de: usuarioLogado,
       texto: novaMensagem,
     };
 
@@ -43,22 +70,11 @@ export default function ChatPage() {
         .from("mensagens")
         .insert([mensagem])
         .then(({data}) => {
-          setListChat([data[0], ...listChat]); //% Os '...' servem para espalhar os itens da lista sem criar array dentro de array
+          console.log(data);
         });
 
       setMensagem("");
     }
-  }
-
-  function removeMessage(id) {
-    //% Remover mensagem pelo id
-    let newListMessages = listChat.filter((mensagem) => {
-      //% 'Filter' para retirar a mensagem da array
-      if (mensagem.id !== id) {
-        return mensagem;
-      }
-    });
-    setListChat(newListMessages);
   }
 
   // ./Sua lógica vai aqui
@@ -104,8 +120,8 @@ export default function ChatPage() {
               padding: "16px",
             }}
           >
-            <MessageList mensagens={listChat} removeMessage={removeMessage} />
-            {/* //% Passando a lista de mensagens E removerMensagem como propriedade */}
+            <MessageList mensagens={listChat} carregando={carregando} />
+            {/* //% Passando a lista de mensagens e carregando como propriedade */}
             <Box
               as="form"
               styleSheet={{
@@ -147,8 +163,15 @@ export default function ChatPage() {
                   marginTop: "10px",
                 }}
               />
+              {/* //% Botão sticker, passando o argumento 'onStickerClick' com a URL do sticker */}
+              <ButtonSendSticker
+                onStickerClick={(sticker) => {
+                  handleNovaMensagem(":sticker:" + sticker); //% todo sticker começando com ':sticker:' vai ser convertido em imagem / gif e enviado para a lista de mensagens
+                }}
+              />
               <Button
-                onClick={() => {
+                onClick={(event) => {
+                  event.preventDefault();
                   handleNovaMensagem(mensagem);
                 }}
                 className="btnSend"
@@ -182,6 +205,23 @@ function Header() {
 }
 
 function MessageList(props) {
+  const roteamento = useRouter(); //% fazer rota para outra página
+  function removeMessage(id) {
+    //% Remover mensagem pelo id
+
+    //% 'Filter' para retirar a mensagem da array
+
+    //% console.log(id) ta saindo o id que eu clico
+    const mensagemRemovida = props.mensagens.filter(
+      (mensagem) => id !== mensagem.id
+    );
+    //% console.log(mensagemRemovida) ta saindo o novo array com valores excluidos
+    supabaseClient
+      .from("mensagens")
+      .delete()
+      .match({id: id})
+      .then(() => props.setListChat(mensagemRemovida));
+  }
   return (
     <Box
       tag="ul"
@@ -194,6 +234,21 @@ function MessageList(props) {
         marginBottom: "16px",
       }}
     >
+      {props.carregando && (
+        <Box
+          styleSheet={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+          }}
+        >
+          <Box>
+            <CircularProgress color="info" />
+          </Box>
+        </Box>
+      )}
+
       {props.mensagens.map((mensagem) => {
         //% Fazendo a listagem da lista de mensagens
         return (
@@ -201,6 +256,7 @@ function MessageList(props) {
             key={mensagem.id}
             tag="li"
             styleSheet={{
+              position: "relative",
               borderRadius: "5px",
               padding: "20px",
               marginBottom: "12px",
@@ -219,6 +275,9 @@ function MessageList(props) {
               }}
             >
               <Image
+                onClick={() => {
+                  roteamento.push(`https://github.com/${username}/`);
+                }}
                 styleSheet={{
                   width: "20px",
                   height: "20px",
@@ -240,8 +299,9 @@ function MessageList(props) {
                 {new Date().toLocaleDateString()}
               </Text>
               <Button
-                onClick={() => {
-                  props.removeMessage(mensagem.id); //% Remover mensagem com o id selecionado
+                onClick={(event) => {
+                  event.preventDefault();
+                  removeMessage(mensagem.id); //% Remover mensagem com o id selecionado
                 }}
                 colorVariant="neutral"
                 label={<span class="material-icons">X</span>}
@@ -256,7 +316,17 @@ function MessageList(props) {
                 }}
               />
             </Box>
-            {mensagem.texto}
+            {/* //% Se for Sticker renderiza o sticker caso não, renderiza a mensagem */}
+            {mensagem.texto.startsWith(":sticker:") ? (
+              <Image
+                src={mensagem.texto.replace(":sticker:", "")}
+                styleSheet={{
+                  maxWidth: "120px",
+                }}
+              />
+            ) : (
+              mensagem.texto
+            )}
           </Text>
         );
       })}

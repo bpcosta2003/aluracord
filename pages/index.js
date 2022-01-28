@@ -71,7 +71,7 @@ export default function PaginaInicial() {
             onSubmit={(infoEvento) => {
               //% Quando submeter algo irá acontecer
               infoEvento.preventDefault(); //% Vai prevenir o carregamento da página
-              roteamento.push("/chat"); //% vai para a página chat.js sem carregar a página
+              roteamento.push(`/chat?username=${username}`); //% vai para a página chat.js sem carregar a página
             }}
             styleSheet={{
               display: "flex",
