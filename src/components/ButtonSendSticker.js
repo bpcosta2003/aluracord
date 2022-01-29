@@ -30,9 +30,9 @@ export function ButtonSendSticker(props) {
             filter: "grayscale(0)",
           },
         }}
-        label="😋"
+        label={isOpen ? "😁" : "😴"}
         onClick={() => setOpenState(!isOpen)} //% Caso clique no botão inverte o valor ( falso para verdadeiro e verdadeiro para falso )
-      />
+      ></Button>
       {isOpen && ( //% caso esteja aberto . . .
         <Box
           className="boxBlur2"

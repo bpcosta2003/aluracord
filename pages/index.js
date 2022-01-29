@@ -39,9 +39,10 @@ export default function PaginaInicial() {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          backgroundColor: appConfig.theme.colors.primary["050"],
+          backgroundColor: "rgba(1, 1, 1,0.4)",
+          backgroundBlendMode: "multiply",
           backgroundImage:
-            "url(https://images.unsplash.com/photo-1642923051153-07d4c98fe203?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1632&q=80)",
+            "url(https://images.unsplash.com/photo-1643002699519-8c87f933c875?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1664&q=80)",
           backgroundRepeat: "no-repeat",
           backgroundSize: "cover",
         }}
@@ -58,11 +59,11 @@ export default function PaginaInicial() {
             },
             width: "100%",
             maxWidth: "1000px",
-            borderRadius: "10px",
+            borderRadius: "30px",
             padding: "32px",
             margin: "16px",
             boxShadow: "0 20px 20px 0 rgb(0 0 0 / 20%)",
-            backgroundColor: "rgba(225,225,225,0.5)",
+            backgroundColor: "rgba(225,225,225,0.8)",
           }}
         >
           {/* Formulário */}
@@ -98,7 +99,7 @@ export default function PaginaInicial() {
             <TextField
               type="text"
               placeholder="Coloque seu username do GitHub"
-              value={username}
+              value={username.toLowerCase()}
               onChange={(event) => {
                 //% cada vez que o usuário digitar vai acontecer algo
                 const value = event.target.value; //% Onde está o valor ?
@@ -129,7 +130,28 @@ export default function PaginaInicial() {
                 mainColorLight: appConfig.theme.colors.primary[800],
                 mainColorStrong: appConfig.theme.colors.neutrals[800],
               }}
+              styleSheet={{
+                marginTop: "12px",
+                fontWeight: "900",
+              }}
               disabled={username.length < 3 || disable} //% vai desabilitar o botão caso user < 3 caracteres e caso não exista
+            />
+            <Button
+              type="submit"
+              label="CRIAR CONTA NO GITHUB"
+              href="https://github.com/signup?source=login"
+              iconName="github"
+              fullWidth
+              buttonColors={{
+                contrastColor: appConfig.theme.colors.neutrals["100"],
+                mainColor: appConfig.theme.colors.neutrals[900],
+                mainColorLight: appConfig.theme.colors.primary[800],
+                mainColorStrong: appConfig.theme.colors.neutrals[800],
+              }}
+              styleSheet={{
+                marginTop: "12px",
+                fontWeight: "900",
+              }}
             />
           </Box>
           {/* Formulário */}
