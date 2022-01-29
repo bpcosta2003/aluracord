@@ -113,7 +113,7 @@ export default function MyApp({Component, pageProps}) {
           href="https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Circle-icons-chat.svg/1200px-Circle-icons-chat.svg.png"
         />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin />
         <link
           href="https://fonts.googleapis.com/css2?family=Anton&family=Fira+Sans:wght@500&family=Nunito:wght@600&family=Sora:wght@800&display=swap"
           rel="stylesheet"
