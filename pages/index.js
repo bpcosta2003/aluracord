@@ -55,13 +55,29 @@ export default function PaginaInicial() {
             justifyContent: "space-between",
             flexDirection: {
               xs: "column",
-              sm: "row",
+              sm: disable || username.length < 3 ? "column" : "column",
+              md: disable || username.length < 3 ? "column" : "row",
+              lg: disable || username.length < 3 ? "column" : "row",
+              xl: disable || username.length < 3 ? "column" : "row",
             },
+
             width: "100%",
             maxWidth: "1000px",
-            borderRadius: "30px",
+            borderRadius: {
+              xs: "0px",
+              sm: "30px",
+              md: "30px",
+              lg: "30px",
+              xl: "30px",
+            },
             padding: "32px",
-            margin: "16px",
+            margin: {
+              xs: "0px",
+              sm: "20px",
+              md: "25px",
+              lg: "32px",
+              xl: "60px",
+            },
             boxShadow: "0 20px 20px 0 rgb(0 0 0 / 20%)",
             backgroundColor: "rgba(225,225,225,0.8)",
           }}
@@ -79,7 +95,13 @@ export default function PaginaInicial() {
               flexDirection: "column",
               alignItems: "left",
               justifyContent: "center",
-              width: {xs: "100%", sm: "50%"},
+              width: {
+                xs: "100%",
+                sm: disable || username.length < 3 ? "80%" : "60%",
+                md: disable || username.length < 3 ? "80%" : "60%",
+                lg: disable || username.length < 3 ? "80%" : "60%",
+                xl: disable || username.length < 3 ? "80%" : "60%",
+              },
               textAlign: "left",
               margin: "22px",
             }}
@@ -154,71 +176,75 @@ export default function PaginaInicial() {
               }}
             />
           </Box>
-          {/* Formulário */}
 
-          {/* Photo Area */}
-          <Box
-            className="boxImgBack"
-            styleSheet={{
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "center",
-              maxWidth: "250px",
-              padding: "10px 10px",
-              background:
-                "linear-gradient(90deg,rgba(245,245,245,0),rgba(245,245,245,0))",
-              border: "0px solid",
-              boxShadow: "0 10px 90px 0 rgb(0 0 0 / 20%)",
-              borderRadius: "10%",
-              flex: 1,
-              minHeight: "240px",
-            }}
-          >
-            <Image
-              className="boxImg"
+          {disable || username.length < 3 ? (
+            ""
+          ) : (
+            <Box
+              className="boxImgBack"
               styleSheet={{
-                borderRadius: "100%",
-                marginBottom: "16px",
-                boxShadow: "0 5px 5px 0 rgb(0 0 0 / 10%)",
-              }}
-              src={
-                //% Verificação se o nome de usuário é valido para ter imagem
-                username.length >= 3 ? `https://github.com/${username}.png` : ``
-              }
-              onError={() => {
-                //% Se houver erro ( não achar imagem de usuário ) caso seja falso vai se tornar true ( vai desabilitar o botão )
-                if (!disable) {
-                  setDisable(true);
-                }
-              }}
-            />
-            <Text
-              variant="body4"
-              styleSheet={{
-                color: appConfig.theme.colors.neutrals[200],
-                backgroundColor: appConfig.theme.colors.neutrals[900],
-                padding: "3px 10px",
-                borderRadius: "1000px",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+                maxWidth: "250px",
+                padding: "10px 10px",
+                background:
+                  "linear-gradient(90deg,rgba(245,245,245,0),rgba(245,245,245,0))",
+                border: "0px solid",
+                boxShadow: "0 10px 90px 0 rgb(0 0 0 / 20%)",
+                borderRadius: "10%",
+                flex: 1,
+                minHeight: "240px",
               }}
             >
-              {disable || username.length < 3 //% caso disable = true e o usuário tiver menos de 3 caracteres vai informar 'Usuário Inválido', caso contrário mostra o nome de usuário
-                ? "Usuário Inválido"
-                : `${username}`}
-            </Text>
-            <p>
-              {bioUser}
-              <style jsx>{`
-                p {
-                  color: black;
-                  font-size: 12px;
-                  font-weight: bold;
-                  text-align: center;
-                  margin-top: 8px;
+              <Image
+                className="boxImg"
+                styleSheet={{
+                  borderRadius: "100%",
+                  marginBottom: "16px",
+                  boxShadow: "0 5px 5px 0 rgb(0 0 0 / 10%)",
+                }}
+                src={
+                  //% Verificação se o nome de usuário é valido para ter imagem
+                  username.length >= 3
+                    ? `https://github.com/${username}.png`
+                    : ``
                 }
-              `}</style>
-            </p>
-          </Box>
+                onError={() => {
+                  //% Se houver erro ( não achar imagem de usuário ) caso seja falso vai se tornar true ( vai desabilitar o botão )
+                  if (!disable) {
+                    setDisable(true);
+                  }
+                }}
+              />
+              <Text
+                variant="body4"
+                styleSheet={{
+                  color: appConfig.theme.colors.neutrals[200],
+                  backgroundColor: appConfig.theme.colors.neutrals[900],
+                  padding: "3px 10px",
+                  borderRadius: "1000px",
+                }}
+              >
+                {disable || username.length < 3 //% caso disable = true e o usuário tiver menos de 3 caracteres vai informar 'Usuário Inválido', caso contrário mostra o nome de usuário
+                  ? "Usuário Inválido"
+                  : `${username}`}
+              </Text>
+              <p>
+                {bioUser}
+                <style jsx>{`
+                  p {
+                    color: black;
+                    font-size: 12px;
+                    font-weight: bold;
+                    text-align: center;
+                    margin-top: 8px;
+                  }
+                `}</style>
+              </p>
+            </Box>
+          )}
 
           {/* Photo Area */}
         </Box>
