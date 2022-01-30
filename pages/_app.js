@@ -11,6 +11,7 @@ function GlobalStyle() {
         list-style: none;
       }
       *::-webkit-scrollbar {
+        display: none;
         width: 5px;
       }
       *::-webkit-scrollbar-track {
@@ -18,7 +19,7 @@ function GlobalStyle() {
       }
 
       *::-webkit-scrollbar-thumb {
-        background-color: #cccccc;
+        background-color: rgba(255, 255, 255, 0.1);
         border-radius: 100px;
         border: 0px solid orange;
       }
@@ -59,7 +60,6 @@ function GlobalStyle() {
       }
       .perfilLogado {
         padding: 2rem;
-        border-radius: 10px;
         background: linear-gradient(
           90deg,
           rgba(115, 182, 43, 0.2),
@@ -74,6 +74,7 @@ function GlobalStyle() {
         width: 9rem;
         height: 45.8px;
       }
+
       .btnSend:hover {
         background: #335771 !important;
       }

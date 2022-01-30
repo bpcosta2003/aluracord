@@ -41,13 +41,13 @@ export function ButtonSendSticker(props) {
             flexDirection: "column",
             borderRadius: "5px",
             position: "absolute",
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            backgroundColor: "rgba(0, 0, 0, 0.9)",
             width: {
               xs: "200px",
               sm: "290px",
             },
             height: "300px",
-            right: "30px",
+            right: "0px",
             bottom: "70px",
             padding: "20px",
             boxShadow:

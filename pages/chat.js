@@ -198,13 +198,24 @@ function ChatPage({SUPABASE_ANON_KEY, SUPABASE_URL}) {
             display: "flex",
             flexDirection: "column",
             flex: 1,
-
-            borderRadius: "5px",
+            borderRadius: {
+              xs: "0px",
+              sm: "10px",
+              md: "10px",
+              lg: "10px",
+              xl: "10px",
+            },
             backgroundColor: "rgba(1,1,1,0)",
             height: "100%",
-            maxWidth: "95%",
-            maxHeight: "95vh",
-            padding: "32px",
+            maxWidth: "100%",
+            maxHeight: "100vh",
+            padding: {
+              xs: "0px",
+              sm: "20px",
+              md: "25px",
+              lg: "32px",
+              xl: "60px",
+            },
           }}
         >
           <Header usuarioLogado={usuarioLogado} carregando={carregando} />
@@ -217,9 +228,14 @@ function ChatPage({SUPABASE_ANON_KEY, SUPABASE_URL}) {
               height: "80%",
               backgroundColor: "rgba(1,1,1,0.5)",
               flexDirection: "column",
-              borderRadius: "5px",
               padding: "16px",
-              borderRadius: "10px",
+              borderRadius: {
+                xs: "0px",
+                sm: "10px",
+                md: "10px",
+                lg: "10px",
+                xl: "10px",
+              },
             }}
           >
             <MessageList
@@ -321,6 +337,13 @@ function Header(props) {
               width: "100%",
               justifyContent: "space-between",
               boxShadow: "5px 5px 25px rgba(0, 0, 0, 1)",
+              borderRadius: {
+                xs: "0px",
+                sm: "10px",
+                md: "10px",
+                lg: "10px",
+                xl: "10px",
+              },
             }}
           >
             <Box
