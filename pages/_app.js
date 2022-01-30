@@ -60,7 +60,11 @@ function GlobalStyle() {
       .perfilLogado {
         padding: 2rem;
         border-radius: 10px;
-        background-color: rgba(0, 0, 0, 0.5);
+        background: linear-gradient(
+          90deg,
+          rgba(115, 182, 43, 0.2),
+          rgba(0, 0, 0, 0.5)
+        );
         backdrop-filter: blur(2rem);
         box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2);
       }

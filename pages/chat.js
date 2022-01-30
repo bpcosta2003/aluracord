@@ -31,14 +31,38 @@ function ChatPage({SUPABASE_ANON_KEY, SUPABASE_URL}) {
 
   const [carregando, setCarregando] = React.useState(true);
 
+  // Lista para deletar mensagens :
+
+  // const [deleting, setDeleting] = React.useState([]);
+
   //% Supabase CLIENT
 
   const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+  // function escutaMensagensEmTempoReal(adicionaMensagem) {
+  //   return supabaseClient
+  //     .from("mensagens")
+  //     .on("INSERT", (respostaLive) => {
+  //       adicionaMensagem(respostaLive.new);
+  //     })
+  //     .on("DELETE", (respostaLive) => {
+  //       adicionaMensagem(respostaLive.old.id);
+  //     })
+  //     .subscribe();
+  // }
+
   //% Função para escutar uma nova mensagem chegando no banco de dados, passando como argumento uma função para adicionar a mensagem
 
-  //% Hook do React para alteração APENAS quando ocorrer um efeito
-  React.useEffect(() => {
+  function escutaMensagensEmTempoReal(attMensagens) {
+    //% Pegando dados do SUPABASE
+    supabaseClient
+      .from("mensagens")
+      .on("INSERT", attMensagens)
+      .on("DELETE", attMensagens)
+      .subscribe();
+  }
+
+  function attMensagens() {
     //% Pegando dados do SUPABASE
     supabaseClient
       .from("mensagens") //% Pegar da tabela 'mensagens' la no SUPABASE
@@ -48,29 +72,76 @@ function ChatPage({SUPABASE_ANON_KEY, SUPABASE_URL}) {
         setListChat(data); //% Atribuindo valores do banco de dados na lista de mensagens
         setCarregando(false);
       });
+  }
 
+  //% Hook do React para alteração APENAS quando ocorrer um efeito
+
+  React.useEffect(() => {
+    attMensagens();
     //% Passa função que pega a nova mensagem
-
-    const subscription = escutaMensagensEmTempoReal((novaMensagem) => {
-      //% Se eu quero reusar um valor de referencia (objeto/array) preciso passar uma função pro setState()
-      //% Eu escuto a mensagem em tempo real, sempre que tiver uma nova mensagem eu jogo na lista e vai renderizar ela na tela
-      setListChat((valorAtualDaLista) => {
-        return [novaMensagem, ...valorAtualDaLista];
-      }); //% Os '...' servem para espalhar os itens da lista sem criar array dentro de array
-    });
-
-    return () => {
-      subscription.unsubscribe();
-    };
+    escutaMensagensEmTempoReal(attMensagens);
   }, []);
 
-  function escutaMensagensEmTempoReal(adicionaMensagem) {
-    return supabaseClient
+  // React.useEffect(() => {
+
+  //   supabaseClient
+  //     .from("mensagens")
+  //     .select("*")
+  //     .order("id", {ascending: false})
+  //     .then(({data}) => {
+  //       setListChat(data);
+  //       setCarregando(false);
+  //     });
+
+  //
+
+  //   escutaMensagensEmTempoReal((novaMensagem) => {
+  //     setListChat((valorAtualDaLista) => {
+  //       return [novaMensagem, ...valorAtualDaLista];
+  //     });
+  //   });
+  // }, []);
+
+  // function handleDeleteMensagem(id) {
+
+  //  , isolando-o e criando um novo array
+
+  //   setDeleting((valorAtual) => {
+  //     return [...valorAtual, id];
+  //   });
+
+  //   supabaseClient
+  //     .from("mensagens")
+  //     .delete()
+  //     .match({id: id})
+  //     .then(() => {
+  //       setDeleting((valorAtual) => {
+  //         return valorAtual.filter((value) => {
+  //           return value !== id;
+  //         });
+  //       });
+  //       setListChat(
+  //         listChat.filter((element) => {
+  //           return element.id !== id;
+  //         })
+  //       );
+  //     });
+  // }
+
+  //% Remover mensagem pelo ID
+  function handleDeleteMensagem(id) {
+    supabaseClient
       .from("mensagens")
-      .on("INSERT", (respostaLive) => {
-        adicionaMensagem(respostaLive.new);
-      })
-      .subscribe();
+      .delete()
+      .match({id: id})
+      .then(() => {
+        setListChat(
+          listChat.filter((element) => {
+            //% Filtra pelo ID, selecionando o elemento
+            return element.id !== id;
+          })
+        );
+      });
   }
 
   function handleNovaMensagem(novaMensagem) {
@@ -100,7 +171,7 @@ function ChatPage({SUPABASE_ANON_KEY, SUPABASE_URL}) {
         .from("mensagens")
         .insert([mensagem])
         .then(({data}) => {
-          console.log(data);
+          setListChat([data[0], ...listChat]);
         });
 
       setMensagem("");
@@ -156,6 +227,7 @@ function ChatPage({SUPABASE_ANON_KEY, SUPABASE_URL}) {
               carregando={carregando}
               setListChat={setListChat}
               username={usuarioLogado}
+              onDelete={handleDeleteMensagem}
             />
             {/* //% Passando a lista de mensagens e carregando como propriedade */}
             <Box
@@ -297,23 +369,25 @@ function Header(props) {
 function MessageList(props) {
   const roteamento = useRouter(); //% fazer rota para outra página
 
-  function handleDeleteMensagem(id) {
-    //% Remover mensagem pelo ID
-    //% Filtra pelo ID, selecionando o elemento, isolando-o e criando um novo array
-    const mensagemRemovida = props.mensagens.filter((mensagemFiltrada) => {
-      if (mensagemFiltrada.id !== id) {
-        return mensagemFiltrada;
-      }
-    });
-    supabaseClient
-      .from("mensagens")
-      .delete()
-      .match({id: id})
-      .then((data) => {
-        console.log(data);
-      });
-
-    props.setListChat([...mensagemRemovida]);
+  function generateDate(string) {
+    //% formatar data
+    var time = new Date(string).toLocaleTimeString().substring(0, 5);
+    var date;
+    switch (new Date().getDate() - new Date(string).getDate()) {
+      case 0:
+        date = "Hoje";
+        break;
+      case 1:
+        date = "Ontem";
+        break;
+      case 2:
+        date = "Anteontem";
+        break;
+      default:
+        time = time;
+        date = new Date(string).toLocaleDateString();
+    }
+    return `${date} ${time}`;
   }
 
   return (
@@ -363,9 +437,16 @@ function MessageList(props) {
               padding: "20px",
               marginBottom: "12px",
               backgroundColor: "rgba(1,1,1,0.3)",
+              background:
+                mensagem.de.toLowerCase() == props.username.toLowerCase()
+                  ? "linear-gradient( 270deg, rgba(115, 182, 43, 0.2), rgba(0, 0, 0, 0.5))"
+                  : "rgba(1,1,1,0.3)",
+
               hover: {
                 background:
-                  "linear-gradient(90deg,rgba(245,245,245,0.1),rgba(245,245,245,0.1))",
+                  mensagem.de.toLowerCase() == props.username.toLowerCase()
+                    ? "linear-gradient( 270deg, rgba(115, 182, 43, 0.2), rgba(245,245,245,0.1))"
+                    : "linear-gradient( 270deg, rgba(245,245,245,0.1), rgba(245,245,245,0.1))",
               },
             }}
           >
@@ -426,7 +507,7 @@ function MessageList(props) {
                   onClick={(event) => {
                     event.preventDefault();
 
-                    handleDeleteMensagem(mensagem.id); //% Remover mensagem com o id selecionado
+                    props.onDelete(mensagem.id); //% Remover mensagem com o id selecionado
                   }}
                   colorVariant="neutral"
                   label="X"
@@ -461,10 +542,7 @@ function MessageList(props) {
                     marginTop: "20px",
                   }}
                 >
-                  {new Date(mensagem.created_at).toLocaleString("pt-BR", {
-                    dateStyle: "short",
-                    timeStyle: "short",
-                  })}
+                  {generateDate(mensagem.created_at)}
                 </Text>
               </>
             ) : (
@@ -483,10 +561,7 @@ function MessageList(props) {
                     marginTop: "15px",
                   }}
                 >
-                  {new Date(mensagem.created_at).toLocaleString("pt-BR", {
-                    dateStyle: "short",
-                    timeStyle: "short",
-                  })}
+                  {generateDate(mensagem.created_at)}
                 </Text>
               </>
             )}
