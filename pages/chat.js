@@ -8,6 +8,8 @@ import {ButtonSendSticker} from "../src/components/ButtonSendSticker";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import Swal from "sweetalert2";
 
+//% Chat
+
 function ChatPage({SUPABASE_ANON_KEY, SUPABASE_URL}) {
   //% Roteamento
 
