@@ -8,25 +8,7 @@ import {ButtonSendSticker} from "../src/components/ButtonSendSticker";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import Swal from "sweetalert2";
 
-//% Conexão com o SUPABASE
-
-const supabaseClient = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-);
-
-//% Função para escutar uma nova mensagem chegando no banco de dados, passando como argumento uma função para adicionar a mensagem
-
-function escutaMensagensEmTempoReal(adicionaMensagem) {
-  return supabaseClient
-    .from("mensagens")
-    .on("INSERT", (respostaLive) => {
-      adicionaMensagem(respostaLive.new);
-    })
-    .subscribe();
-}
-
-export default function ChatPage({SUPABASE_ANON_KEY, SUPABASE_URL}) {
+function ChatPage({SUPABASE_ANON_KEY, SUPABASE_URL}) {
   //% Roteamento
 
   const rotaUsuario = useRouter();
@@ -46,6 +28,12 @@ export default function ChatPage({SUPABASE_ANON_KEY, SUPABASE_URL}) {
   //% Animação de carregamento de mensagens
 
   const [carregando, setCarregando] = React.useState(true);
+
+  //% Supabase CLIENT
+
+  const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  //% Função para escutar uma nova mensagem chegando no banco de dados, passando como argumento uma função para adicionar a mensagem
 
   //% Hook do React para alteração APENAS quando ocorrer um efeito
   React.useEffect(() => {
@@ -73,6 +61,15 @@ export default function ChatPage({SUPABASE_ANON_KEY, SUPABASE_URL}) {
       subscription.unsubscribe();
     };
   }, []);
+
+  function escutaMensagensEmTempoReal(adicionaMensagem) {
+    return supabaseClient
+      .from("mensagens")
+      .on("INSERT", (respostaLive) => {
+        adicionaMensagem(respostaLive.new);
+      })
+      .subscribe();
+  }
 
   function handleNovaMensagem(novaMensagem) {
     //% função que recebe a mensagem digitada, adiciona essa mensagem a lista e limpa o cmpo de mensagem
@@ -222,6 +219,8 @@ export default function ChatPage({SUPABASE_ANON_KEY, SUPABASE_URL}) {
     </>
   );
 }
+
+//% Conexão com o SUPABASE
 
 function Header(props) {
   return (
@@ -495,3 +494,15 @@ function MessageList(props) {
     </Box>
   );
 }
+
+export async function getServerSideProps() {
+  const {SUPABASE_ANON_KEY, SUPABASE_URL} = process.env;
+  return {
+    props: {
+      SUPABASE_URL,
+      SUPABASE_ANON_KEY,
+    },
+  };
+}
+
+export default ChatPage;
